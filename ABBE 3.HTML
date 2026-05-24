@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AB BE CRM - Innovation & Feedback</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --ab-blue: #00407a; --ab-gold: #c5a021; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f4f7fa; }
+        .bg-ab-blue { background-color: var(--ab-blue); }
+        .text-ab-blue { color: var(--ab-blue); }
+        .bg-ab-gold { background-color: var(--ab-gold); }
+        .border-ab-gold { border-color: var(--ab-gold); }
+        .hidden { display: none; }
+        .active-link { background: rgba(255,255,255,0.1); border-left: 4px solid var(--ab-gold); font-weight: bold; color: white !important; }
+        .kanban-col { min-width: 300px; width: 300px; }
+        .glass { background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); }
+        
+        /* Personnalisation Slider Gold */
+        input[type=range] { accent-color: var(--ab-gold); }
+    </style>
+</head>
+<body class="h-screen flex overflow-hidden">
+
+    <!-- ================= PAGE D'AUTHENTIFICATION ================= -->
+    <div id="auth-page" class="fixed inset-0 z-50 flex items-center justify-center bg-ab-blue">
+        <div class="glass p-10 rounded-3xl shadow-2xl w-full max-w-md border border-white/20 relative z-10 text-center">
+            <div class="flex flex-col items-center mb-8">
+                <div class="p-4 bg-white rounded-2xl shadow-lg mb-4">
+                    <img src="https://i.ibb.co/3YvX3Cq/abbe-logo.png" alt="AB BE" class="h-20 object-contain">
+                </div>
+                <h1 class="text-3xl font-extrabold text-ab-blue tracking-tight">AB BE CRM</h1>
+                <p class="text-ab-gold font-semibold text-xs uppercase tracking-[0.3em] mt-2">Innovation • Service • Croissance</p>
+            </div>
+            <form id="login-form" class="space-y-5">
+                <input type="email" placeholder="Email professionnel" required class="w-full px-5 py-4 rounded-xl border border-gray-200 focus:ring-2 focus:ring-ab-gold outline-none">
+                <input type="password" placeholder="Mot de passe" required class="w-full px-5 py-4 rounded-xl border border-gray-200 focus:ring-2 focus:ring-ab-gold outline-none">
+                <button type="submit" class="w-full bg-ab-blue text-white py-4 rounded-xl font-bold hover:bg-black transition-all shadow-xl flex items-center justify-center gap-3">
+                    SE CONNECTER <i data-lucide="arrow-right"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= STRUCTURE PRINCIPALE ================= -->
+    <div id="main-app" class="flex h-screen w-full hidden">
+        
+        <!-- SIDEBAR -->
+        <aside class="bg-ab-blue w-72 flex-shrink-0 flex flex-col text-white shadow-2xl">
+            <div class="p-8 flex flex-col items-center border-b border-white/10">
+                <img src="https://i.ibb.co/3YvX3Cq/abbe-logo.png" alt="AB BE" class="h-14 mb-2 brightness-200 contrast-200">
+                <h2 class="text-lg font-black">AB BE GROUP</h2>
+            </div>
+            
+            <nav class="flex-1 py-8 px-4 space-y-2">
+                <button onclick="changeView('kanban')" id="nav-kanban" class="active-link w-full flex items-center gap-4 px-5 py-4 rounded-xl transition-all hover:bg-white/5 text-gray-300">
+                    <i data-lucide="layout-kanban" class="w-5 h-5"></i><span>Pipeline</span>
+                </button>
+                <button onclick="changeView('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-4 px-5 py-4 rounded-xl transition-all hover:bg-white/5 text-gray-300">
+                    <i data-lucide="pie-chart" class="w-5 h-5"></i><span>Analytique</span>
+                </button>
+                <button onclick="changeView('feedback')" id="nav-feedback" class="w-full flex items-center gap-4 px-5 py-4 rounded-xl transition-all hover:bg-white/5 text-gray-300">
+                    <i data-lucide="message-square-quote" class="w-5 h-5"></i><span>Feedback</span>
+                </button>
+            </nav>
+
+            <div class="p-6 border-t border-white/10">
+                <button onclick="location.reload()" class="flex items-center gap-2 text-xs text-red-300 font-bold"><i data-lucide="log-out" class="w-4 h-4"></i> DÉCONNEXION</button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <div class="flex-1 flex flex-col min-w-0">
+            
+            <header class="h-20 bg-white border-b border-gray-200 flex items-center justify-between px-10">
+                <div id="view-title" class="text-2xl font-extrabold text-ab-blue">Pipeline Ventes</div>
+                <div class="w-10 h-10 rounded-full bg-ab-gold flex items-center justify-center text-white font-bold">AB</div>
+            </header>
+
+            <main id="content" class="flex-1 overflow-auto p-10">
+                
+                <!-- VUE KANBAN (Simplifiée pour l'exemple) -->
+                <div id="view-kanban" class="flex gap-8">
+                    <div class="kanban-col bg-gray-50 p-4 rounded-2xl border-2 border-dashed border-gray-200 flex items-center justify-center text-gray-400 text-sm">
+                        Pipeline AB BE chargé...
+                    </div>
+                </div>
+
+                <!-- VUE DASHBOARD (Simplifiée) -->
+                <div id="view-dashboard" class="hidden grid grid-cols-2 gap-8">
+                    <div class="bg-white p-8 rounded-3xl shadow-sm border-t-4 border-ab-blue">
+                        <h4 class="text-gray-400 font-bold text-xs uppercase">CA Global AB BE</h4>
+                        <p class="text-4xl font-black text-ab-blue mt-2">248 500 €</p>
+                    </div>
+                </div>
+
+                <!-- VUE FEEDBACK (LES 10 QUESTIONS) -->
+                <div id="view-feedback" class="hidden max-w-3xl mx-auto">
+                    <div class="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
+                        <div class="bg-ab-blue p-8 text-white">
+                            <h3 class="text-2xl font-bold">Questionnaire de Satisfaction AB BE</h3>
+                            <p class="text-blue-200 text-sm mt-2">Votre avis nous aide à innover davantage.</p>
+                            
+                            <!-- Barre de progression -->
+                            <div class="w-full bg-blue-900 h-2 rounded-full mt-6">
+                                <div id="feedback-progress" class="bg-ab-gold h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <form id="feedback-form" class="p-10 space-y-10">
+                            <!-- Question 1 -->
+                            <div class="step-question">
+                                <label class="block font-bold text-ab-blue mb-4">1. Quelle est votre satisfaction globale concernant l'interface AB BE CRM ?</label>
+                                <div class="flex justify-between gap-2">
+                                    <template v-for="i in 10">
+                                        <label class="flex-1 text-center border p-3 rounded-xl hover:bg-ab-gold hover:text-white cursor-pointer transition-all">
+                                            <input type="radio" name="q1" value="1" class="hidden"> 1
+                                        </label>
+                                    </template>
+                                    <!-- Simple version for HTML -->
+                                    <label class="flex-1 text-center border p-3 rounded-xl cursor-pointer"><input type="radio" name="q1" value="1" onclick="updateProgress(10)"> 1</label>
+                                    <label class="flex-1 text-center border p-3 rounded-xl cursor-pointer"><input type="radio" name="q1" value="5" onclick="updateProgress(10)"> 5</label>
+                                    <label class="flex-1 text-center border p-3 rounded-xl cursor-pointer"><input type="radio" name="q1" value="10" onclick="updateProgress(10)"> 10</label>
+                                </div>
+                            </div>
+
+                            <!-- Question 2 -->
+                            <div>
+                                <label class="block font-bold text-ab-blue mb-4">2. Estimez-vous que l'outil répond aux valeurs d'Innovation de la société ?</label>
+                                <input type="range" min="0" max="100" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer" onclick="updateProgress(20)">
+                                <div class="flex justify-between text-xs text-gray-400 mt-2"><span>Pas du tout</span><span>Totalement</span></div>
+                            </div>
+
+                            <!-- Question 3 -->
+                            <div>
+                                <label class="block font-bold text-ab-blue mb-4">3. Quelle fonctionnalité utilisez-vous le plus ?</label>
+                                <select class="w-full p-4 bg-gray-50 border rounded-xl outline-none" onclick="updateProgress(30)">
+                                    <option>Pipeline Kanban</option>
+                                    <option>Statistiques & Dashboard</option>
+                                    <option>Gestion Clients</option>
+                                    <option>Calendrier</option>
+                                </select>
+                            </div>
+
+                            <!-- Question 4 -->
+                            <div>
+                                <label class="block font-bold text-ab-blue mb-4">4. Comment évaluez-vous la rapidité de chargement des données ?</label>
+                                <div class="flex gap-4">
+                                    <button type="button" onclick="updateProgress(40)" class="flex-1 p-4 border rounded-xl hover:border-ab-gold">Lent</button>
+                                    <button type="button" onclick="updateProgress(40)" class="flex-1 p-4 border rounded-xl hover:border-ab-gold">Correct</button>
+                                    <button type="button" onclick="updateProgress(40)" class="flex-1 p-4 border rounded-xl hover:border-ab-gold font-bold text-ab-gold border-ab-gold">Très Rapide</button>
+                                </div>
+                            </div>
+
+                            <!-- Question 5 -->
+                            <div>
+                                <label class="block font-bold text-ab-blue mb-4">5. La navigation est-elle intuitive pour vous ?</label>
+                                <div class="flex gap-10">
+                                    <label class="flex items-center gap-2"><input type="radio" name="q5" onclick="updateProgress(50)"> Oui, tout à fait</label>
+                                    <label class="flex items-center gap-2"><input type="radio" name="q5" onclick="updateProgress(50)"> Non, c'est complexe</label>
+                                </div>
+                            </div>
+
+                            <!-- Question 6 -->
+                            <div>
+                                <label class="block font-bold text-ab-blue mb-4">6. Quelle note donnez-vous au service support AB BE ?</label>
+                                <div class="flex gap-2 text-ab-gold">
+                                    <i data-lucide="star" class="w-8 h-8 cursor-pointer fill-current" onclick="updateProgress(60)"></i>
+                                    <i data-lucide="star" class="w-8 h-8 cursor-pointer fill-current" onclick="updateProgress(60)"></i>
+                                    <i data-lucide="star" class="w-8 h-8 cursor-pointer fill-current" onclick="updateProgress(60)"></i>
+                                    <i data-lucide="star" class="w-8 h-8 cursor-pointer fill-current" onclick="updateProgress(60)"></i>
+                                    <i data-lucide="star" class="w-8 h-8 cursor-pointer" onclick="updateProgress(60)"></i>
+                                </div>
+                            </div>
+
+                            <!-- Question 7 -->
+                            <div>
+                                <label class="block font-bold text-ab-blue mb-4">7. Recommanderiez-vous ce CRM à d'autres départements ?</label>
+                                <div class="flex gap-4">
+                                    <label class="flex-1 text-center p-4 bg-green-50 text-green-700 rounded-xl font-bold cursor-pointer"><input type="radio" name="q7" onclick="updateProgress(70)" class="hidden"> OUI</label>
+                                    <label class="flex-1 text-center p-4 bg-red-50 text-red-700 rounded-xl font-bold cursor-pointer"><input type="radio" name="q7" onclick="updateProgress(70)" class="hidden"> NON</label>
+                                </div>
+                            </div>
+
+                            <!-- Question 8 -->
+                            <div>
+                                <label class="block font-bold text-ab-blue mb-4">8. Fréquence d'utilisation de l'outil ?</label>
+                                <div class="space-y-2">
+                                    <label class="block p-3 bg-gray-50 rounded-lg"><input type="radio" name="q8" onclick="updateProgress(80)"> Quotidienne (Plusieurs fois par jour)</label>
+                                    <label class="block p-3 bg-gray-50 rounded-lg"><input type="radio" name="q8" onclick="updateProgress(80)"> Hebdomadaire</label>
+                                </div>
+                            </div>
+
+                            <!-- Question 9 -->
+                            <div>
+                                <label class="block font-bold text-ab-blue mb-4">9. Quel est votre niveau d'enthousiasme pour la prochaine mise à jour ?</label>
+                                <input type="range" min="0" max="100" class="w-full" onclick="updateProgress(90)">
+                            </div>
+
+                            <!-- Question 10 -->
+                            <div>
+                                <label class="block font-bold text-ab-blue mb-4">10. Un dernier commentaire pour l'équipe AB BE ?</label>
+                                <textarea class="w-full p-4 border rounded-2xl h-32 focus:ring-2 focus:ring-ab-gold outline-none" placeholder="Vos idées nous intéressent..." oninput="updateProgress(100)"></textarea>
+                            </div>
+
+                            <button type="submit" class="w-full bg-ab-gold text-white py-5 rounded-2xl font-black shadow-lg hover:scale-[1.02] transition-all">
+                                ENVOYER MES RÉPONSES À AB BE
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // AUTHENTIFICATION
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            document.getElementById('auth-page').style.display = 'none';
+            document.getElementById('main-app').classList.remove('hidden');
+            lucide.createIcons();
+        });
+
+        // CHANGEMENT DE VUE
+        function changeView(viewName) {
+            const views = ['kanban', 'dashboard', 'feedback'];
+            const titles = { 'kanban': 'Pipeline Ventes', 'dashboard': 'Analytique', 'feedback': 'Retours Client' };
+            
+            views.forEach(v => {
+                document.getElementById('view-' + v).classList.add('hidden');
+                document.getElementById('nav-' + v).classList.remove('active-link');
+            });
+
+            document.getElementById('view-' + viewName).classList.remove('hidden');
+            document.getElementById('nav-' + viewName).classList.add('active-link');
+            document.getElementById('view-title').innerText = titles[viewName];
+            lucide.createIcons();
+        }
+
+        // BARRE DE PROGRESSION FEEDBACK
+        function updateProgress(percent) {
+            document.getElementById('feedback-progress').style.width = percent + '%';
+        }
+
+        // ENVOI DU FORMULAIRE
+        document.getElementById('feedback-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert("Merci ! Vos réponses ont été envoyées à l'équipe AB BE Group.");
+            changeView('dashboard');
+        });
+    </script>
+</body>
+</html>

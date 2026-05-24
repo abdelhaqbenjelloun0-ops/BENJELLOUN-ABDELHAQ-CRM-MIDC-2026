@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AB BE CRM - Système de Gestion</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ab-blue: #00407a;
+            --ab-gold: #c5a021;
+        }
+        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
+        .bg-ab-blue { background-color: var(--ab-blue); }
+        .text-ab-blue { color: var(--ab-blue); }
+        .bg-ab-gold { background-color: var(--ab-gold); }
+        .border-ab-gold { border-color: var(--ab-gold); }
+        .hidden { display: none; }
+        
+        /* Animation de transition */
+        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Style spécifique pour les colonnes */
+        .kanban-column { min-width: 310px; width: 310px; }
+    </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden">
+
+    <!-- ================= PAGE D'AUTHENTIFICATION ================= -->
+    <div id="auth-page" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900">
+        <div class="bg-white p-10 rounded-2xl shadow-2xl w-full max-w-md border-b-8 border-ab-gold fade-in">
+            <div class="flex flex-col items-center mb-10">
+                <!-- LOGO DYNAMIQUE -->
+                <div class="w-32 h-32 mb-4 flex items-center justify-center bg-gray-50 rounded-xl border border-gray-100 shadow-inner">
+                    <img id="login-logo" src="https://placehold.co/400x400/00407a/c5a021?text=AB+BE" 
+                         alt="Logo AB BE" class="max-h-full max-w-full object-contain">
+                </div>
+                <h1 class="text-3xl font-black text-ab-blue tracking-tighter">AB BE CRM</h1>
+                <div class="h-1 w-20 bg-ab-gold mt-2"></div>
+                <p class="text-gray-400 text-xs mt-3 uppercase tracking-[0.2em]">Innovation • Service • Croissance</p>
+            </div>
+            
+            <form id="login-form" class="space-y-5">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase ml-1">Identifiant Professionnel</label>
+                    <input type="text" required value="direction@abbe.fr" class="w-full px-4 py-3 mt-1 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-ab-blue focus:bg-white outline-none transition-all">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase ml-1">Mot de passe</label>
+                    <input type="password" required value="password" class="w-full px-4 py-3 mt-1 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-ab-blue focus:bg-white outline-none transition-all">
+                </div>
+                <button type="submit" class="w-full bg-ab-blue text-white py-4 rounded-xl font-bold hover:bg-blue-900 transition-all shadow-lg active:scale-95 flex items-center justify-center gap-2">
+                    ACCÉDER AU DASHBOARD <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= APPLICATION PRINCIPALE ================= -->
+    <div id="main-app" class="flex h-screen w-full hidden">
+        
+        <!-- SIDEBAR -->
+        <aside class="bg-ab-blue w-64 flex-shrink-0 flex flex-col text-white shadow-2xl z-20">
+            <div class="p-8 flex flex-col items-center border-b border-white/10">
+                <img id="sidebar-logo" src="https://placehold.co/400x400/00407a/c5a021?text=AB+BE" 
+                     alt="Logo" class="h-16 mb-2 brightness-125">
+                <span class="text-[10px] font-bold tracking-[0.3em] text-ab-gold">AB BE GROUP</span>
+            </div>
+            
+            <nav class="flex-1 px-4 py-6 space-y-2">
+                <button onclick="switchView('kanban')" id="btn-kanban" class="w-full flex items-center gap-4 px-4 py-3 bg-white/10 border-l-4 border-ab-gold rounded-r-lg font-bold">
+                    <i data-lucide="trello" class="w-5 h-5"></i><span>Pipeline Ventes</span>
+                </button>
+                <button onclick="switchView('dashboard')" id="btn-dashboard" class="w-full flex items-center gap-4 px-4 py-3 text-blue-200 hover:bg-white/5 transition-all rounded-lg">
+                    <i data-lucide="bar-chart-3" class="w-5 h-5"></i><span>Analytique</span>
+                </button>
+                <button class="w-full flex items-center gap-4 px-4 py-3 text-blue-200 hover:bg-white/5 transition-all rounded-lg">
+                    <i data-lucide="building-2" class="w-5 h-5"></i><span>Sociétés Partenaires</span>
+                </button>
+            </nav>
+
+            <div class="p-4 border-t border-white/10 bg-black/10">
+                <button onclick="location.reload()" class="w-full flex items-center justify-center gap-2 text-xs font-bold text-red-300 hover:text-white py-2">
+                    <i data-lucide="power" class="w-4 h-4"></i> DÉCONNEXION
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN CONTENT AREA -->
+        <div class="flex-1 flex flex-col min-w-0">
+            
+            <!-- HEADER -->
+            <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8 shadow-sm">
+                <div class="flex items-center gap-4 flex-1">
+                    <div class="relative w-96">
+                        <i data-lucide="search" class="absolute left-3 top-2.5 text-gray-400 w-4 h-4"></i>
+                        <input type="text" placeholder="Rechercher une entreprise..." class="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-full focus:ring-2 focus:ring-ab-gold outline-none text-sm">
+                    </div>
+                </div>
+                <div class="flex items-center gap-6">
+                    <div class="flex flex-col items-end">
+                        <span class="text-sm font-bold text-ab-blue">Directeur Commercial</span>
+                        <span class="text-[10px] text-green-500 font-bold uppercase tracking-wider">● En ligne</span>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-ab-blue border-2 border-ab-gold flex items-center justify-center text-white font-black">AB</div>
+                </div>
+            </header>
+
+            <!-- VUES -->
+            <main class="flex-1 overflow-x-auto p-8 fade-in">
+                
+                <!-- KANBAN VIEW -->
+                <div id="kanban-view" class="flex gap-6 h-full">
+                    
+                    <!-- COLONNE 1: NOUVEAU -->
+                    <div class="kanban-column">
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="font-black text-ab-blue text-sm uppercase tracking-widest">Nouveau</h3>
+                            <button class="p-1 hover:bg-gray-200 rounded text-ab-gold"><i data-lucide="plus-circle" class="w-5 h-5"></i></button>
+                        </div>
+                        <div class="h-1.5 w-full bg-gray-300 rounded-full mb-6"></div>
+                        
+                        <div class="space-y-4" id="col-new">
+                            <!-- Card 1 -->
+                            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:border-ab-gold hover:shadow-xl transition-all cursor-pointer group">
+                                <div class="flex justify-between mb-2">
+                                    <span class="text-[10px] font-bold text-ab-gold uppercase">Innovation</span>
+                                    <i data-lucide="more-vertical" class="w-4 h-4 text-gray-300"></i>
+                                </div>
+                                <h4 class="font-bold text-gray-800 group-hover:text-ab-blue">Innovatech Solutions</h4>
+                                <p class="text-xs text-gray-400 mt-1 italic">Projet R&D Batterie</p>
+                                <div class="mt-4 flex justify-between items-end">
+                                    <span class="text-lg font-black text-ab-blue">45 000 €</span>
+                                    <div class="flex -space-x-2">
+                                        <img src="https://i.pravatar.cc/100?u=1" class="w-6 h-6 rounded-full border-2 border-white">
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Card 2 -->
+                            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:border-ab-gold transition-all cursor-pointer">
+                                <span class="text-[10px] font-bold text-blue-500 uppercase">Service</span>
+                                <h4 class="font-bold text-gray-800 mt-1">Service Pro Logistics</h4>
+                                <div class="mt-4 flex justify-between items-center text-ab-blue">
+                                    <span class="font-bold">12 800 €</span>
+                                    <i data-lucide="clock" class="w-4 h-4 text-orange-400"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COLONNE 2: QUALIFIÉ -->
+                    <div class="kanban-column">
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="font-black text-ab-blue text-sm uppercase tracking-widest">Qualifié</h3>
+                        </div>
+                        <div class="h-1.5 w-full bg-ab-gold rounded-full mb-6"></div>
+                        
+                        <div class="space-y-4">
+                            <!-- Card 3 -->
+                            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:border-ab-gold transition-all cursor-pointer">
+                                <span class="text-[10px] font-bold text-green-500 uppercase">Croissance</span>
+                                <h4 class="font-bold text-gray-800 mt-1">Croissance Durable S.A.</h4>
+                                <p class="text-xs text-gray-400 mt-1 italic">Audit Énergie</p>
+                                <div class="mt-4 flex justify-between items-center">
+                                    <span class="text-lg font-black text-ab-blue">89 000 €</span>
+                                    <div class="flex text-yellow-400"><i data-lucide="star" class="w-3 h-3 fill-current"></i><i data-lucide="star" class="w-3 h-3 fill-current"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COLONNE 3: PROPOSITION -->
+                    <div class="kanban-column">
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="font-black text-ab-blue text-sm uppercase tracking-widest">Proposition</h3>
+                        </div>
+                        <div class="h-1.5 w-full bg-blue-500 rounded-full mb-6"></div>
+                        <div class="space-y-4">
+                            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 hover:border-ab-gold transition-all cursor-pointer">
+                                <span class="text-[10px] font-bold text-ab-gold uppercase">Innovation</span>
+                                <h4 class="font-bold text-gray-800 mt-1">TechFrontier Global</h4>
+                                <div class="mt-4 flex justify-between items-center">
+                                    <span class="text-lg font-black text-ab-blue">155 000 €</span>
+                                    <i data-lucide="phone-call" class="w-4 h-4 text-blue-500 animate-bounce"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COLONNE 4: GAGNÉ -->
+                    <div class="kanban-column">
+                        <div class="flex justify-between items-center mb-3">
+                            <h3 class="font-black text-green-600 text-sm uppercase tracking-widest">Gagné</h3>
+                        </div>
+                        <div class="h-1.5 w-full bg-green-500 rounded-full mb-6"></div>
+                        <div class="space-y-4">
+                            <div class="bg-green-50/50 p-5 rounded-2xl shadow-sm border border-green-100 border-dashed">
+                                <h4 class="font-bold text-green-800">Luxe & Co Paris</h4>
+                                <p class="text-xl font-black text-green-600 mt-2">210 000 €</p>
+                                <div class="mt-3 flex items-center gap-2 text-[10px] font-bold text-green-700">
+                                    <i data-lucide="check-circle" class="w-4 h-4"></i> CONTRAT SIGNÉ
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DASHBOARD VIEW -->
+                <div id="dashboard-view" class="hidden">
+                    <div class="grid grid-cols-3 gap-8 mb-8">
+                        <div class="bg-white p-8 rounded-3xl shadow-sm border-b-4 border-ab-blue">
+                            <h5 class="text-gray-400 text-xs font-bold uppercase tracking-widest">Pipe Total</h5>
+                            <p class="text-4xl font-black text-ab-blue mt-2">512 600 €</p>
+                        </div>
+                        <div class="bg-white p-8 rounded-3xl shadow-sm border-b-4 border-ab-gold">
+                            <h5 class="text-gray-400 text-xs font-bold uppercase tracking-widest">Objectif Innovation</h5>
+                            <p class="text-4xl font-black text-ab-gold mt-2">78%</p>
+                        </div>
+                        <div class="bg-ab-blue p-8 rounded-3xl shadow-lg text-white">
+                            <h5 class="text-blue-300 text-xs font-bold uppercase tracking-widest">Nouveaux Clients</h5>
+                            <p class="text-4xl font-black mt-2">+12</p>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // --- CONFIGURATION LOGO ---
+        // REMPLACEZ LES LIENS CI-DESSOUS PAR VOS FICHIERS LOCAUX OU WEB
+        const MY_LOGO_URL = 'https://i.postimg.cc/q7SjH9V6/abbe-logo.png'; // Exemple d'hébergement
+
+        function updateLogos() {
+            const loginLogo = document.getElementById('login-logo');
+            const sidebarLogo = document.getElementById('sidebar-logo');
+            
+            // On tente de charger votre logo
+            loginLogo.src = MY_LOGO_URL;
+            sidebarLogo.src = MY_LOGO_URL;
+
+            // Sécurité : si l'image ne charge pas, on met un placeholder propre
+            loginLogo.onerror = function() {
+                this.src = "https://placehold.co/400x400/00407a/c5a021?text=AB+BE";
+            };
+            sidebarLogo.onerror = function() {
+                this.src = "https://placehold.co/400x400/00407a/c5a021?text=AB+BE";
+            };
+        }
+
+        // --- INITIALISATION ---
+        lucide.createIcons();
+        updateLogos();
+
+        // --- LOGIQUE AUTHENTIFICATION ---
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector('button');
+            btn.innerHTML = `<span class="animate-spin">◌</span> CHARGEMENT...`;
+            
+            setTimeout(() => {
+                document.getElementById('auth-page').classList.add('hidden');
+                document.getElementById('main-app').classList.remove('hidden');
+                lucide.createIcons();
+            }, 800);
+        });
+
+        // --- NAVIGATION ENTRE VUES ---
+        function switchView(viewName) {
+            const isKanban = viewName === 'kanban';
+            
+            // Masquer/Afficher les divs
+            document.getElementById('kanban-view').classList.toggle('hidden', !isKanban);
+            document.getElementById('dashboard-view').classList.toggle('hidden', isKanban);
+            
+            // Style des boutons
+            const btnK = document.getElementById('btn-kanban');
+            const btnD = document.getElementById('btn-dashboard');
+            
+            if(isKanban) {
+                btnK.className = "w-full flex items-center gap-4 px-4 py-3 bg-white/10 border-l-4 border-ab-gold rounded-r-lg font-bold";
+                btnD.className = "w-full flex items-center gap-4 px-4 py-3 text-blue-200 hover:bg-white/5 transition-all rounded-lg";
+            } else {
+                btnD.className = "w-full flex items-center gap-4 px-4 py-3 bg-white/10 border-l-4 border-ab-gold rounded-r-lg font-bold";
+                btnK.className = "w-full flex items-center gap-4 px-4 py-3 text-blue-200 hover:bg-white/5 transition-all rounded-lg";
+                lucide.createIcons();
+            }
+        }
+    </script>
+</body>
+</html>

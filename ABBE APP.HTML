@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AB BE CRM - Innovation & Croissance</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ab-blue: #00407a; /* Bleu AB BE */
+            --ab-gold: #c5a021; /* Or AB BE */
+        }
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .bg-ab-blue { background-color: var(--ab-blue); }
+        .text-ab-blue { color: var(--ab-blue); }
+        .bg-ab-gold { background-color: var(--ab-gold); }
+        .border-ab-gold { border-color: var(--ab-gold); }
+        .hover-gold:hover { background-color: #b08e1b; }
+        
+        .hidden { display: none; }
+        .kanban-column { min-width: 300px; }
+    </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden">
+
+    <!-- ================= PAGE D'AUTHENTIFICATION ================= -->
+    <div id="auth-page" class="fixed inset-0 z-50 flex items-center justify-center bg-gray-100">
+        <div class="bg-white p-10 rounded-2xl shadow-2xl w-full max-w-md border-t-4 border-ab-gold">
+            <div class="flex flex-col items-center mb-8">
+                <!-- Remplacer src par l'image réelle -->
+                <img src="https://i.ibb.co/3YvX3Cq/abbe-logo.png" alt="AB BE Logo" class="h-24 mb-4 object-contain">
+                <h2 class="text-2xl font-bold text-ab-blue">Espace Commercial</h2>
+                <p class="text-gray-400 text-sm italic">Innovation • Service • Croissance</p>
+            </div>
+            
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Email</label>
+                    <input type="email" required value="admin@abbe.fr" class="w-full px-4 py-2 mt-1 border rounded-lg focus:ring-2 focus:ring-ab-blue outline-none border-gray-200">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Mot de passe</label>
+                    <input type="password" required value="••••••••" class="w-full px-4 py-2 mt-1 border rounded-lg focus:ring-2 focus:ring-ab-blue outline-none border-gray-200">
+                </div>
+                <button type="submit" class="w-full bg-ab-blue text-white py-3 rounded-lg font-bold hover:opacity-90 transition-all shadow-lg active:scale-95">
+                    SE CONNECTER
+                </button>
+            </form>
+            <p class="mt-6 text-center text-xs text-gray-400">© 2024 AB BE. Tous droits réservés.</p>
+        </div>
+    </div>
+
+    <!-- ================= APPLICATION CRM PRINCIPALE ================= -->
+    <div id="main-app" class="flex h-screen w-full hidden">
+        
+        <!-- SIDEBAR -->
+        <aside class="bg-ab-blue w-64 flex-shrink-0 flex flex-col text-white shadow-2xl z-20">
+            <div class="p-6 flex flex-col items-center gap-2 border-b border-blue-900 bg-white/5">
+                <img src="https://i.ibb.co/3YvX3Cq/abbe-logo.png" alt="Logo" class="h-12 brightness-200 contrast-200">
+                <span class="text-[10px] tracking-[0.2em] uppercase opacity-60">Gestion CRM</span>
+            </div>
+            <nav class="flex-1 py-6 space-y-1">
+                <button onclick="switchView('dashboard')" class="w-full flex items-center gap-4 px-6 py-3 text-gray-300 hover:bg-white/10 transition-all">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+                    <span class="text-sm font-medium">Dashboard</span>
+                </button>
+                <button onclick="switchView('kanban')" class="w-full flex items-center gap-4 px-6 py-3 bg-ab-gold text-white font-bold">
+                    <i data-lucide="kanban" class="w-5 h-5"></i>
+                    <span class="text-sm">Pipeline Ventes</span>
+                </button>
+                <button class="w-full flex items-center gap-4 px-6 py-3 text-gray-300 hover:bg-white/10 transition-all">
+                    <i data-lucide="users" class="w-5 h-5"></i>
+                    <span class="text-sm">Clients AB BE</span>
+                </button>
+            </nav>
+            <button onclick="location.reload()" class="p-4 text-xs text-blue-300 hover:text-white flex items-center gap-2 justify-center border-t border-blue-900">
+                <i data-lucide="log-out" class="w-4 h-4"></i> Déconnexion
+            </button>
+        </aside>
+
+        <!-- CONTENT AREA -->
+        <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+            
+            <!-- TOOLBAR -->
+            <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8 shadow-sm">
+                <div class="flex items-center flex-1 max-w-xl">
+                    <div class="relative w-full">
+                        <i data-lucide="search" class="absolute left-3 top-2.5 text-gray-400 w-4 h-4"></i>
+                        <input type="text" placeholder="Rechercher une opportunité AB BE..." class="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-md focus:ring-2 focus:ring-ab-gold outline-none text-sm">
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button onclick="alert('Ouverture du formulaire Nouveau Lead')" class="bg-ab-blue hover:opacity-90 text-white px-6 py-2 rounded-md text-sm font-bold shadow-md transition-all active:scale-95">
+                        + NOUVEAU
+                    </button>
+                    <div class="w-10 h-10 rounded-full bg-ab-gold flex items-center justify-center text-white font-bold shadow-inner">
+                        AD
+                    </div>
+                </div>
+            </header>
+
+            <!-- VUES DYNAMIQUES -->
+            <main id="content-view" class="flex-1 overflow-x-auto p-8">
+                
+                <!-- KANBAN VIEW (Défaut) -->
+                <div id="kanban-view" class="flex gap-6 h-full">
+                    <!-- Colonne 1 -->
+                    <div class="kanban-column flex flex-col">
+                        <div class="flex justify-between items-center mb-2 px-1">
+                            <h3 class="font-bold text-ab-blue uppercase text-xs">Nouveau</h3>
+                            <span class="text-xs bg-gray-200 px-2 py-0.5 rounded-full text-gray-600">2</span>
+                        </div>
+                        <div class="h-1 bg-ab-gold mb-4 rounded-full"></div>
+                        <div class="space-y-3">
+                            <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-ab-gold hover:shadow-md transition-all cursor-pointer">
+                                <h4 class="font-bold text-sm text-gray-800">Projet Innovation X</h4>
+                                <p class="text-[10px] text-gray-400 mb-3">Société Alpha</p>
+                                <div class="flex justify-between items-center">
+                                    <span class="text-sm font-black text-ab-blue">25 000 €</span>
+                                    <img src="https://i.pravatar.cc/150?u=1" class="w-6 h-6 rounded-full border border-gray-100">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Colonne 2 -->
+                    <div class="kanban-column flex flex-col opacity-60">
+                        <div class="flex justify-between items-center mb-2 px-1">
+                            <h3 class="font-bold text-gray-400 uppercase text-xs">Qualifié</h3>
+                        </div>
+                        <div class="h-1 bg-gray-200 mb-4 rounded-full"></div>
+                        <div class="border-2 border-dashed border-gray-200 rounded-xl h-32 flex items-center justify-center text-gray-300 text-xs">
+                            Glisser ici
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DASHBOARD VIEW (Masqué par défaut) -->
+                <div id="dashboard-view" class="hidden h-full">
+                    <h2 class="text-2xl font-bold text-ab-blue mb-6">Performance Innovation</h2>
+                    <div class="grid grid-cols-3 gap-6">
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border-t-4 border-ab-blue">
+                            <p class="text-gray-400 text-sm">Chiffre d'Affaires</p>
+                            <p class="text-3xl font-black text-ab-blue mt-2">142 000 €</p>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border-t-4 border-ab-gold">
+                            <p class="text-gray-400 text-sm">Taux de Croissance</p>
+                            <p class="text-3xl font-black text-ab-gold mt-2">+12.5%</p>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // Initialisation des icônes
+        lucide.createIcons();
+
+        // LOGIQUE : AUTHENTIFICATION
+        const loginForm = document.getElementById('login-form');
+        const authPage = document.getElementById('auth-page');
+        const mainApp = document.getElementById('main-app');
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            // Simulation de chargement
+            const btn = loginForm.querySelector('button');
+            btn.innerText = "CONNEXION EN COURS...";
+            
+            setTimeout(() => {
+                authPage.classList.add('hidden');
+                mainApp.classList.remove('hidden');
+                lucide.createIcons();
+            }, 1000);
+        });
+
+        // LOGIQUE : CHANGEMENT DE VUE
+        function switchView(viewName) {
+            const views = ['kanban-view', 'dashboard-view'];
+            views.forEach(v => {
+                document.getElementById(v).classList.add('hidden');
+            });
+            document.getElementById(viewName + '-view').classList.remove('hidden');
+            
+            // Mise à jour visuelle des boutons (optionnel)
+            console.log("Passage à la vue : " + viewName);
+        }
+    </script>
+</body>
+</html>
