@@ -1,10 +1,10 @@
 # AB BE CRM — Solution Intégrée de Gestion Commerciale Mobilier
 
 ## 1. Contexte Académique et Objectifs
-Ce projet a été réalisé à l'**ENCG Settat** dans le cadre du module **Outils CRM** (Master Management International et Développement Commercial, Année Universitaire 2025-2026). 
+Ce projet a été réalisé à l'**ENCG Settat** dans le cadre du module **Outils CRM** (Master Marketing innovation et Développement Commercial, Année Universitaire 2025-2026). 
 
 L'exercice pratique vise à :
-- Concevoir et configurer les processus de gestion commerciale au sein de l'environnement ERP **Odoo** (référencé sous l'image native `AB BE Meubles.png.png`).
+- Concevoir et configurer les processus de gestion commerciale au sein de l'environnement ERP **Odoo** (référencé sous l'image native `AB BE Meubles.png`).
 - Expérimenter une méthodologie de **prototypage rapide par Intelligence Artificielle** (Studio AI & Google AI Builder) en soumettant la cartographie fonctionnelle d'Odoo afin de générer une application métier web dédiée, autonome et optimisée.
 
 ---
@@ -27,7 +27,3 @@ Le système intègre l'ensemble du périmètre opérationnel de la relation clie
 
 ---
 
-## 4. Déploiement Local
-1. Clonez ce dépôt GitHub.
-2. Assurez-vous d'avoir le fichier `index.html` à la racine.
-3. Exécutez le fichier directement dans votre navigateur web.
