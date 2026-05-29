@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AB BE CRM | Gestion Intégrée Mobilier</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --ab-blue: #072F4F;
+            --ab-gold: #C5A021;
+        }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f4f7fa; }
+        .bg-ab-blue { background-color: var(--ab-blue); }
+        .text-ab-blue { color: var(--ab-blue); }
+        .bg-ab-gold { background-color: var(--ab-gold); }
+        .text-ab-gold { color: var(--ab-gold); }
+        .border-ab-gold { border-color: var(--ab-gold); }
+        .hidden { display: none; }
+        .active-link { background: rgba(255,255,255,0.1); border-left: 4px solid var(--ab-gold); color: white !important; }
+        .kanban-col { min-width: 300px; width: 300px; flex-shrink: 0; }
+    </style>
+</head>
+<body class="h-screen flex overflow-hidden">
+
+    <!-- PAGE DE CONNEXION -->
+    <div id="auth-page" class="fixed inset-0 z-50 flex items-center justify-center bg-ab-blue text-center">
+        <div class="bg-white p-10 rounded-3xl shadow-2xl w-full max-w-md border-b-8 border-ab-gold">
+            <div class="text-3xl font-black text-ab-blue mb-2 tracking-tighter">AB BE</div>
+            <h1 class="text-xl font-bold text-gray-700 tracking-tight uppercase">Espace CRM Institutionnel</h1>
+            <p class="text-gray-400 text-[10px] uppercase tracking-widest mt-2 mb-8">Système de gestion interne</p>
+            <form id="login-form" class="space-y-4">
+                <input type="email" placeholder="Identifiant" required class="w-full px-5 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-ab-gold">
+                <input type="password" placeholder="Mot de passe" required class="w-full px-5 py-3 border rounded-xl outline-none focus:ring-2 focus:ring-ab-gold">
+                <button type="submit" class="w-full bg-ab-blue text-white py-4 rounded-xl font-bold shadow-lg hover:opacity-90 transition-all uppercase tracking-wider">Se connecter</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- STRUCTURE PRINCIPALE -->
+    <div id="main-app" class="flex h-screen w-full hidden">
+        
+        <!-- SIDEBAR -->
+        <aside class="bg-ab-blue w-64 flex-shrink-0 flex flex-col text-white shadow-2xl">
+            <div class="p-6 border-b border-white/10 text-center">
+                <div class="bg-white/10 p-3 rounded-xl mb-2">
+                    <span class="text-2xl font-black text-white tracking-widest">AB BE</span>
+                </div>
+                <p class="text-[9px] text-ab-gold font-bold tracking-[0.2em] uppercase">Management System</p>
+            </div>
+            
+            <nav class="flex-1 py-6 px-4 space-y-2 overflow-y-auto">
+                <button onclick="changeView('dashboard')" id="nav-dashboard" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-blue-100/70 transition-all hover:bg-white/5 active-link">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i><span class="text-sm font-semibold">Tableau de Bord</span>
+                </button>
+                <button onclick="changeView('sales')" id="nav-sales" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-blue-100/70 transition-all hover:bg-white/5">
+                    <i data-lucide="shopping-cart" class="w-5 h-5"></i><span class="text-sm font-semibold">Ventes (Odoo Kanban)</span>
+                </button>
+                <button onclick="changeView('deliveries')" id="nav-deliveries" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-blue-100/70 transition-all hover:bg-white/5">
+                    <i data-lucide="truck" class="w-5 h-5"></i><span class="text-sm font-semibold">Suivi Livraisons</span>
+                </button>
+                <button onclick="changeView('stock')" id="nav-stock" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-blue-100/70 transition-all hover:bg-white/5">
+                    <i data-lucide="package" class="w-5 h-5"></i><span class="text-sm font-semibold">Stock Mobilier</span>
+                </button>
+                <button onclick="changeView('contacts')" id="nav-contacts" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-blue-100/70 transition-all hover:bg-white/5">
+                    <i data-lucide="users" class="w-5 h-5"></i><span class="text-sm font-semibold">Contacts Clients</span>
+                </button>
+                <button onclick="changeView('feedback')" id="nav-feedback" class="w-full flex items-center gap-4 px-4 py-3 rounded-xl text-blue-100/70 transition-all hover:bg-white/5">
+                    <i data-lucide="message-circle" class="w-5 h-5"></i><span class="text-sm font-semibold">Feedback Client</span>
+                </button>
+            </nav>
+
+            <div class="p-6 border-t border-white/10">
+                <button onclick="location.reload()" class="w-full text-xs text-red-400 font-bold flex items-center gap-2 justify-center hover:text-red-300 transition-colors">
+                    <i data-lucide="power" class="w-4 h-4"></i> DÉCONNEXION
+                </button>
+            </div>
+        </aside>
+
+        <!-- CONTENU PRINCIPAL -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <header class="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8 shadow-sm">
+                <div class="flex items-center gap-4">
+                    <div class="h-8 w-1 bg-ab-gold rounded-full"></div>
+                    <h2 id="view-title" class="text-lg font-extrabold text-ab-blue uppercase tracking-tight">Tableau de Bord</h2>
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="text-right">
+                        <p class="text-[10px] font-bold text-gray-400 uppercase">Utilisateur</p>
+                        <p class="text-sm font-black text-ab-blue">ADMIN AB BE</p>
+                    </div>
+                    <div class="w-10 h-10 bg-ab-gold rounded-xl flex items-center justify-center text-white font-bold shadow-md">AB</div>
+                </div>
+            </header>
+
+            <main id="content" class="flex-1 overflow-auto p-8">
+
+                <!-- TABLEAU DE BORD (KPIs Généraux) -->
+                <div id="view-dashboard" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border-t-4 border-ab-blue">
+                        <h4 class="text-gray-400 font-bold text-[10px] uppercase tracking-wider">Volume d'opportunités (Pipeline)</h4>
+                        <p class="text-3xl font-black text-ab-blue mt-2">210 400 $</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border-t-4 border-ab-gold">
+                        <h4 class="text-gray-400 font-bold text-[10px] uppercase tracking-wider">Commandes en cours</h4>
+                        <p class="text-3xl font-black text-ab-blue mt-2">12 Deals</p>
+                    </div>
+                    <div class="bg-ab-blue p-6 rounded-2xl shadow-xl text-white">
+                        <h4 class="text-ab-gold font-bold text-[10px] uppercase tracking-wider">Taux de Conversion Final</h4>
+                        <p class="text-3xl font-black mt-2">34%</p>
+                    </div>
+                </div>
+
+                <!-- MODULE VENTES (Pipeline Kanban fidèle à Odoo) -->
+                <div id="view-sales" class="hidden h-full flex gap-6 overflow-x-auto pb-4 items-start">
+                    <!-- Nouveau -->
+                    <div class="kanban-col bg-gray-100 p-4 rounded-2xl flex flex-col gap-4">
+                        <div class="font-bold text-ab-blue uppercase text-xs flex justify-between"><span>Nouveau</span><span class="text-gray-500">$ 80 000</span></div>
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+                            <h5 class="font-bold text-sm text-ab-blue">Devis pour 150 tapis</h5>
+                            <p class="text-xs text-gray-500 mt-1">$ 40 000,00</p>
+                            <span class="text-[9px] bg-red-100 text-red-700 px-2 py-0.5 rounded font-bold mt-2 inline-block">Product</span>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+                            <h5 class="font-bold text-sm text-ab-blue">Quote for 12 Tables</h5>
+                            <p class="text-xs text-gray-500 mt-1">$ 40 000,00</p>
+                            <span class="text-[9px] bg-red-100 text-red-700 px-2 py-0.5 rounded font-bold mt-2 inline-block">Product</span>
+                        </div>
+                    </div>
+                    <!-- Qualifié -->
+                    <div class="kanban-col bg-gray-100 p-4 rounded-2xl flex flex-col gap-4">
+                        <div class="font-bold text-ab-blue uppercase text-xs flex justify-between"><span>Qualifié</span><span class="text-gray-500">$ 51 300</span></div>
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+                            <h5 class="font-bold text-sm text-ab-blue">Quote for 600 Chairs</h5>
+                            <p class="text-xs text-gray-500 mt-1">$ 22 500,00</p>
+                            <span class="text-[9px] bg-red-100 text-red-700 px-2 py-0.5 rounded font-bold mt-2 inline-block">Product</span>
+                        </div>
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+                            <h5 class="font-bold text-sm text-ab-blue">Info about services</h5>
+                            <p class="text-xs text-gray-500 mt-1">$ 25 000,00</p>
+                            <span class="text-[9px] bg-red-100 text-red-700 px-2 py-0.5 rounded font-bold mt-2 inline-block">Product</span>
+                        </div>
+                    </div>
+                    <!-- Proposition -->
+                    <div class="kanban-col bg-gray-100 p-4 rounded-2xl flex flex-col gap-4">
+                        <div class="font-bold text-ab-blue uppercase text-xs flex justify-between"><span>Proposition</span><span class="text-gray-500">$ 79 100</span></div>
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+                            <h5 class="font-bold text-sm text-ab-blue">Modern Open Space</h5>
+                            <p class="text-xs text-gray-500 mt-1">$ 4 500,00</p>
+                            <span class="text-[9px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-bold mt-2 inline-block">Information</span>
+                        </div>
+                    </div>
+                    <!-- Gagné -->
+                    <div class="kanban-col bg-gray-100 p-4 rounded-2xl flex flex-col gap-4">
+                        <div class="font-bold text-green-700 uppercase text-xs flex justify-between"><span>Gagné</span><span class="text-green-700">$ 19 800</span></div>
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-green-200">
+                            <h5 class="font-bold text-sm text-ab-blue">Distributor Contract</h5>
+                            <p class="text-xs text-gray-500 mt-1">$ 19 800,00</p>
+                            <span class="text-[9px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded font-bold mt-2 inline-block">Information</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MODULE LIVRAISONS -->
+                <div id="view-deliveries" class="hidden bg-white rounded-2xl shadow-sm p-6 overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-gray-200 text-gray-400 text-xs uppercase">
+                                <th class="pb-3 font-bold">Réf Commande</th>
+                                <th class="pb-3 font-bold">Client / Compte</th>
+                                <th class="pb-3 font-bold">Destination</th>
+                                <th class="pb-3 font-bold">Statut de Livraison</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm text-ab-blue font-medium divide-y divide-gray-100">
+                            <tr>
+                                <td class="py-4">#BL-2026-001</td>
+                                <td class="py-4">OpenWood Trading</td>
+                                <td class="py-4">Casablanca-Anfa</td>
+                                <td class="py-4"><span class="bg-yellow-100 text-yellow-800 px-3 py-1 rounded-full text-xs font-bold">En préparation</span></td>
+                            </tr>
+                            <tr>
+                                <td class="py-4">#BL-2026-002</td>
+                                <td class="py-4">Gemini Furniture</td>
+                                <td class="py-4">Rabat-Agdal</td>
+                                <td class="py-4"><span class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-xs font-bold">Livré</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- MODULE STOCK -->
+                <div id="view-stock" class="hidden grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-200">
+                        <div class="p-6">
+                            <h5 class="font-bold text-ab-blue text-base">Chaises Ergonomiques (Lot de 600)</h5>
+                            <p class="text-xs text-gray-400 mt-1">Réf: AB-CH-600</p>
+                            <div class="flex justify-between items-center mt-6">
+                                <span class="text-ab-gold font-bold">22 500 $</span>
+                                <span class="bg-green-100 text-green-700 px-2 py-1 rounded text-[10px] font-bold">DISPONIBLE</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-200">
+                        <div class="p-6">
+                            <h5 class="font-bold text-ab-blue text-base">Tapis Bureaux Premium (Lot de 150)</h5>
+                            <p class="text-xs text-gray-400 mt-1">Réf: AB-TP-150</p>
+                            <div class="flex justify-between items-center mt-6">
+                                <span class="text-ab-gold font-bold">40 000 $</span>
+                                <span class="bg-red-100 text-red-700 px-2 py-1 rounded text-[10px] font-bold">RUPTURE IMMINENTE</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MODULE CONTACTS -->
+                <div id="view-contacts" class="hidden bg-white rounded-2xl shadow-sm p-6 overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-gray-200 text-gray-400 text-xs uppercase">
+                                <th class="pb-3 font-bold">Nom Complet</th>
+                                <th class="pb-3 font-bold">Organisation</th>
+                                <th class="pb-3 font-bold">E-mail Professionnel</th>
+                                <th class="pb-3 font-bold">Téléphone</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm text-ab-blue font-medium divide-y divide-gray-100">
+                            <tr>
+                                <td class="py-4">Erik N. French</td>
+                                <td class="py-4">Acme Corporation</td>
+                                <td class="py-4">e.french@acme.ma</td>
+                                <td class="py-4">+212 522 45 45 80</td>
+                            </tr>
+                            <tr>
+                                <td class="py-4">Henry Jordan</td>
+                                <td class="py-4">Ready Mat S.A.</td>
+                                <td class="py-4">h.jordan@readymat.co.ma</td>
+                                <td class="py-4">+212 661 12 34 56</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- MODULE FEEDBACK -->
+                <div id="view-feedback" class="hidden max-w-xl mx-auto">
+                    <div class="bg-white p-8 rounded-3xl shadow-xl border-t-8 border-ab-blue">
+                        <h3 class="text-xl font-black text-ab-blue text-center uppercase mb-6">Évaluation & Satisfaction Client (CSAT)</h3>
+                        <form class="space-y-6">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-600 uppercase mb-3">Qualité du mobilier de bureau livré ?</label>
+                                <div class="flex gap-4 text-ab-gold">
+                                    <i data-lucide="star" class="fill-current w-6 h-6"></i>
+                                    <i data-lucide="star" class="fill-current w-6 h-6"></i>
+                                    <i data-lucide="star" class="fill-current w-6 h-6"></i>
+                                    <i data-lucide="star" class="fill-current w-6 h-6"></i>
+                                    <i data-lucide="star" class="w-6 h-6 text-gray-200"></i>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-600 uppercase mb-2">Commentaires additionnels</label>
+                                <textarea rows="3" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-ab-gold text-sm" placeholder="Renseigner le retour d'expérience client..."></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-ab-blue text-white py-4 rounded-xl font-bold shadow-lg uppercase text-sm tracking-wider">Soumettre le feedback</button>
+                        </form>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <script>
+        lucide.createIcons();
+
+        // GESTION CONNEXION
+        document.getElementById('login-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            document.getElementById('auth-page').style.display = 'none';
+            document.getElementById('main-app').classList.remove('hidden');
+            lucide.createIcons();
+        });
+
+        // ROUTING INTERNE (SPA)
+        function changeView(viewName) {
+            const views = ['dashboard', 'sales', 'deliveries', 'stock', 'contacts', 'feedback'];
+            const titles = {
+                'dashboard': 'Tableau de Bord Stratégique',
+                'sales': 'Gestion du Pipeline Ventes (Odoo Kanban)',
+                'deliveries': 'Suivi des Expéditions & Livraisons',
+                'stock': 'Catalogue & Inventaire Mobilier',
+                'contacts': 'Base de Données Contacts Clients',
+                'feedback': 'Évaluation & Feedback Client'
+            };
+
+            views.forEach(v => {
+                document.getElementById('view-' + v).classList.add('hidden');
+                document.getElementById('nav-' + v).classList.remove('active-link');
+            });
+
+            document.getElementById('view-' + viewName).classList.remove('hidden');
+            document.getElementById('nav-' + viewName).classList.add('active-link');
+            document.getElementById('view-title').innerText = titles[viewName];
+            lucide.createIcons();
+        }
+    </script>
+</body>
+</html>
